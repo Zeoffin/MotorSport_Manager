@@ -7,23 +7,36 @@ import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.EventListener;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import com.badlogic.gdx.utils.viewport.ScalingViewport;
+import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.fractjile.Main;
 import com.fractjile.Tools;
 
+import java.awt.*;
 import java.awt.event.InputEvent;
 
 public class MainMenuScreen extends ScreenAdapter {
 
-    Main game;
+    private Main game;
+
+
 
     // For easy RGB conversion
-    Tools tools = new Tools();
+    private Tools tools = new Tools();
 
     // To draw shapes
-    ShapeRenderer shapeRenderer = new ShapeRenderer();
+    private ShapeRenderer shapeRenderer = new ShapeRenderer();
 
     // Background Image and logo
     private static Texture background;
@@ -33,10 +46,17 @@ public class MainMenuScreen extends ScreenAdapter {
     private float window_width = tools.get_window_width();
     private float window_height = tools.get_window_height();
 
+    private Stage stage;
+
     // Option menu
     private static Texture single_player;
-    float single_player_x = window_width/2-100;
-    float single_player_y = window_height/2-50;
+    private static Texture single_player_clicked;
+
+    private Image btnSP;
+    private Image btnSP_clicked;
+
+    private float single_player_x = window_width/2-100;
+    private float single_player_y = window_height/2-50;
 
     // Constructor
     public MainMenuScreen(Main game) {
@@ -49,15 +69,11 @@ public class MainMenuScreen extends ScreenAdapter {
     @Override
     public void show(){
 
-        Gdx.input.setInputProcessor(new InputAdapter() {
-            @Override
-            public boolean touchDown(int x, int y, int pointer, int button) {
-                if (x >= single_player_x+single_player.getWidth() && y>= single_player_y+single_player.getHeight()) {
-                    game.setScreen(new GameScreen(game));
-                }
-                return true;
-            }
-        });
+        stage = new Stage(new ScreenViewport());
+        Gdx.input.setInputProcessor(stage);
+
+        btnSP = new Image(single_player);
+        btnSP_clicked = new Image(single_player_clicked);
 
     }
 
@@ -87,12 +103,15 @@ public class MainMenuScreen extends ScreenAdapter {
         Gdx.input.setInputProcessor(null);
     }
 
-    public void loadTextures() {
+    private void loadTextures() {
 
         background = new Texture(Gdx.files.internal("bg.jpg"));
         logo = new Texture(Gdx.files.internal("mm.png"));
         single_player = new Texture(Gdx.files.internal("mm_sp.png"));
+        single_player_clicked = new Texture(Gdx.files.internal("mm_sp_selected.png"));
 
     }
+
+
 
 }

@@ -11,12 +11,16 @@ public class DesktopLauncher {
 	private static final int windows_width = 1000;
 
 	public static void main (String[] arg) {
+
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
+
 		config.title = StringValues.game_title;
 		config.height = windows_height;
 		config.width = windows_width;
 		config.resizable = false;
+
 		new LwjglApplication(new Main(), config);
+
 	}
 
 }

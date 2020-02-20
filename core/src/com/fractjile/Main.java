@@ -6,23 +6,24 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.fractjile.screens.MainMenuScreen;
+import com.fractjile.screens.MenuScreen;
 import com.fractjile.values.StringValues;
 
 public class Main extends Game {
 
     public SpriteBatch batch;
-    public ShapeRenderer shapeRenderer;
+    private ShapeRenderer shapeRenderer;
     public BitmapFont font;
 
+    public static String state;
 
     @Override
     public void create () {
 
-        //Gdx.graphics.setTitle(StringValues.game_title);
         batch = new SpriteBatch();
         shapeRenderer = new ShapeRenderer();
         font = new BitmapFont();
-        setScreen(new MainMenuScreen(this));
+        setScreen(new MenuScreen(this));
     }
 
     @Override

@@ -1,68 +1,77 @@
 package com.fractjile.screens;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.InputAdapter;
-import com.badlogic.gdx.ScreenAdapter;
+import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.fractjile.Main;
+import com.fractjile.Tools;
+import com.fractjile.values.StringValues;
 
-public class GameScreen extends ScreenAdapter {
+public class GameScreen implements Screen {
 
-    Main game;
+    private Main game;
+    private Tools tools = new Tools();
 
-    float circleX = 300;
-    float circleY = 150;
-    float circleRadius = 50;
-
-    float xSpeed = 4;
-    float ySpeed = 3;
+    // Textures
+    private Texture background;
 
     public GameScreen(Main game) {
+
         this.game = game;
+        Main.state = "GameScreen";
+        loadTextures();
+
     }
 
     @Override
     public void show() {
-        Gdx.input.setInputProcessor(new InputAdapter() {
-            @Override
-            public boolean touchDown(int x, int y, int pointer, int button) {
-                int renderY = Gdx.graphics.getHeight() - y;
-                if (Vector2.dst(circleX, circleY, x, renderY) < circleRadius) {
-                    game.setScreen(new EndScreen(game));
-                }
-                return true;
-            }
-        });
+
+        Stage stage = new Stage();
+        Gdx.input.setInputProcessor(stage);
+
     }
 
     @Override
     public void render(float delta) {
-        circleX += xSpeed;
-        circleY += ySpeed;
 
-        if (circleX < 0 || circleX > Gdx.graphics.getWidth()) {
-            xSpeed *= -1;
-        }
+        game.batch.begin();
+        game.batch.draw(background, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        game.font.draw(game.batch, StringValues.game_version, Gdx.graphics.getWidth() *(float)0.9, Gdx.graphics.getHeight()*(float)0.05);
+        game.batch.end();
 
-        if (circleY < 0 || circleY > Gdx.graphics.getHeight()) {
-            ySpeed *= -1;
-        }
+    }
 
-        Gdx.gl.glClearColor(0, 0, .25f, 1);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+    @Override
+    public void resize(int width, int height) {
 
-        game.shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-        game.shapeRenderer.setColor(0, 1, 0, 1);
-        game.shapeRenderer.circle(circleX, circleY, 75);
-        game.shapeRenderer.end();
+    }
+
+    @Override
+    public void pause() {
+
+    }
+
+    @Override
+    public void resume() {
 
     }
 
     @Override
     public void hide() {
-        Gdx.input.setInputProcessor(null);
+
+    }
+
+    @Override
+    public void dispose() {
+
+    }
+
+    private void loadTextures() {
+
+        background = new Texture(Gdx.files.internal("background_game.jpg"));
+
     }
 
 }
