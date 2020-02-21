@@ -3,6 +3,7 @@ package com.fractjile.screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -14,24 +15,20 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.fractjile.Main;
-import com.fractjile.Tools;
 import com.fractjile.values.StringValues;
+import com.fractjile.values.TextureValues;
 
 public class MenuScreen implements Screen {
 
     private Main game;
 
-    // For easy RGB conversion
-    private Tools tools = new Tools();
+    // For loading background and logo
+    private TextureValues textureValues;
 
-    // Background Image and logo
-    private static Texture background;
-    private static Texture logo;
+    // For managing assets
+    AssetManager assetManager = new AssetManager();
 
-    // Window height and width
-    private float window_width = tools.get_window_width();
-    private float window_height = tools.get_window_height();
-
+    // Stage
     private Stage stage;
 
     // Option menu
@@ -49,6 +46,8 @@ public class MenuScreen implements Screen {
         this.game = game;
         Main.state = "MenuScreen";
         loadTextures();
+        textureValues = new TextureValues(game);
+        textureValues.loadGlobalTextures();
     }
 
     @Override
@@ -108,15 +107,16 @@ public class MenuScreen implements Screen {
 
                 if(button == Input.Buttons.LEFT) {
 
+                    game.setScreen(new OptionsScreen(game));
                     btnOption.setDrawable(new TextureRegionDrawable(new TextureRegion(options)));
-                    //btnSP.addAction(Actions.removeActor());
+                    //btnOption.addAction(Actions.removeActor());
 
                 }
             }
 
         });
 
-        // Quit listener
+        // Quit listener for exiting the game
         btnQuit.addListener(new InputListener() {
 
             @Override
@@ -139,7 +139,8 @@ public class MenuScreen implements Screen {
                 if(button == Input.Buttons.LEFT) {
 
                     btnQuit.setDrawable(new TextureRegionDrawable(new TextureRegion(quit)));
-                    //btnSP.addAction(Actions.removeActor());
+                    System.exit(0);
+                    //btnQuit.addAction(Actions.removeActor());
 
                 }
 
@@ -164,15 +165,12 @@ public class MenuScreen implements Screen {
     public void render(float delta) {
 
         game.batch.begin();
-        game.batch.draw(background, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        game.batch.draw(logo,window_width/2-50, window_height/2+80);
+        textureValues.drawGlobalTextures();
         game.font.draw(game.batch, StringValues.game_version, Gdx.graphics.getWidth() *(float)0.9, Gdx.graphics.getHeight()*(float)0.05);
         game.batch.end();
 
         stage.act();
         stage.draw();
-
-        System.out.println(Gdx.graphics.getFramesPerSecond());
 
     }
 
@@ -201,16 +199,13 @@ public class MenuScreen implements Screen {
 
         single_player.dispose();
         single_player_clicked.dispose();
-        logo.dispose();
-        background.dispose();
+        textureValues.disposeGlobalTextures();
         stage.dispose();
 
     }
 
     private void loadTextures() {
-
-        background = new Texture(Gdx.files.internal("bg.jpg"));
-        logo = new Texture(Gdx.files.internal("mm.png"));
+        
         single_player = new Texture(Gdx.files.internal("mm_sp.png"));
         options = new Texture(Gdx.files.internal("mm_options.png"));
         options_selected = new Texture(Gdx.files.internal("mm_options_selected.png"));
