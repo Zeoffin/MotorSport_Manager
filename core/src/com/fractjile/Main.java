@@ -1,21 +1,16 @@
 package com.fractjile;
 
 import com.badlogic.gdx.Game;
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.fractjile.screens.MainMenuScreen;
 import com.fractjile.screens.MenuScreen;
-import com.fractjile.values.StringValues;
 
 public class Main extends Game {
 
     public SpriteBatch batch;
     private ShapeRenderer shapeRenderer;
     public BitmapFont font;
-
-    public static String state;
 
     @Override
     public void create () {

@@ -6,13 +6,13 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.fractjile.Main;
-import com.fractjile.Tools;
+import com.fractjile.values.NumericValues;
 import com.fractjile.values.StringValues;
 
 public class GameScreen implements Screen {
 
     private Main game;
-    private Tools tools = new Tools();
+    private Stage stage;
 
     // Textures
     private Texture background;
@@ -20,7 +20,6 @@ public class GameScreen implements Screen {
     public GameScreen(Main game) {
 
         this.game = game;
-        Main.state = "GameScreen";
         loadTextures();
 
     }
@@ -28,7 +27,7 @@ public class GameScreen implements Screen {
     @Override
     public void show() {
 
-        Stage stage = new Stage();
+        stage = new Stage();
         Gdx.input.setInputProcessor(stage);
 
     }
@@ -36,16 +35,20 @@ public class GameScreen implements Screen {
     @Override
     public void render(float delta) {
 
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
         game.batch.begin();
         game.batch.draw(background, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        game.font.draw(game.batch, StringValues.game_version, Gdx.graphics.getWidth() *(float)0.9, Gdx.graphics.getHeight()*(float)0.05);
+        game.font.draw(game.batch, StringValues.game_version, NumericValues.version_x_position, NumericValues.version_y_position);
         game.batch.end();
 
     }
 
     @Override
     public void resize(int width, int height) {
-
+        stage.getViewport().update(width, height, true);
+        game.font.getRegion().getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+        game.font.getData().setScale(1, 1);
     }
 
     @Override
@@ -65,6 +68,9 @@ public class GameScreen implements Screen {
 
     @Override
     public void dispose() {
+
+        stage.dispose();
+        game.dispose();
 
     }
 
