@@ -80,7 +80,7 @@ public class MenuScreen implements Screen {
 
                     btnSP.setDrawable(new TextureRegionDrawable(new TextureRegion(single_player)));
                     btnSP.addAction(Actions.removeActor());
-                    game.setScreen(new GameScreen(game));
+                    game.setScreen(new PlayScreen(game));
                 }
             }
 

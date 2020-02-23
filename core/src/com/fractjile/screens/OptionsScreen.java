@@ -5,17 +5,17 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.fractjile.Main;
+import com.fractjile.Tools;
+import com.fractjile.TopBar;
 import com.fractjile.values.NumericValues;
 import com.fractjile.values.StringValues;
 import com.fractjile.values.TextureValues;
@@ -29,19 +29,24 @@ public class OptionsScreen implements Screen {
     private Stage stage;
     private TextureValues textureValues;
 
+    TopBar topBar = new TopBar();
+
+    // Tool class
+    Tools tools = new Tools();
+
     // List for choosing resolution
     private List<String> resolutionList;
 
     public HashMap<Integer, String> resolutionMap = new HashMap<>();
 
     // Textures
-    private static Texture back;
-    private static Texture back_clicked;
+    //private static Texture back;
+    //private static Texture back_clicked;
     private static Texture apply;
     private static Texture apply_clicked;
 
     // Buttons
-    private Image btnBack;
+    //private Image btnBack;
     private Image btnApply;
 
     TextButton fullscreen;
@@ -60,16 +65,15 @@ public class OptionsScreen implements Screen {
     public void show() {
 
         // Skin
-        TextureAtlas textureAtlas = new TextureAtlas(Gdx.files.internal("ui/uiskin.atlas"));
-        Skin skin = new Skin(Gdx.files.internal("ui/uiskin.json"), textureAtlas);
+        tools.loadSkin();
 
         // Text labels for options
-        Label resolutionLabel = new Label(StringValues.resolutionText, skin);
-        Label fullscreenLabel = new Label(StringValues.fullscreenText, skin);
+        Label resolutionLabel = new Label(StringValues.resolutionText, tools.skin);
+        Label fullscreenLabel = new Label(StringValues.fullscreenText, tools.skin);
 
         // For toggling between fullscreen and windowed
-        fullscreen = new TextButton(StringValues.fullscreenToggle, skin);
-        windowed = new TextButton(StringValues.windowedToggle, skin);
+        fullscreen = new TextButton(StringValues.fullscreenToggle, tools.skin);
+        windowed = new TextButton(StringValues.windowedToggle, tools.skin);
 
         final ButtonGroup buttonGroup = new ButtonGroup(windowed, fullscreen);
         buttonGroup.setMaxCheckCount(1);
@@ -78,48 +82,48 @@ public class OptionsScreen implements Screen {
         buttonGroup.setChecked("Windowed");
 
         // Scrollpane for selecting resolution
-        ScrollPane scrollPane = new ScrollPane(null, skin);
+        ScrollPane scrollPane = new ScrollPane(null, tools.skin);
 
         // Set up resolution hashMap
-        resolutionList = new List<>(skin);
+        resolutionList = new List<>(tools.skin);
         resolutionList.setFillParent(true);
         resolutionList.setItems(StringValues.resolutions);
 
         // Set up buttons
-        btnBack = new Image(back);
+        //btnBack = new Image(back);
         btnApply = new Image(apply);
 
         // Stage and set inputs
         stage = new Stage(new ScreenViewport());
         Gdx.input.setInputProcessor(stage);
 
-        // Back button listener
-        btnBack.addListener(new InputListener() {
-
-            @Override
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-
-                if(button == Input.Buttons.LEFT) {
-                    btnBack.setDrawable(new TextureRegionDrawable(new TextureRegion(back_clicked)));
-                }
-
-                return true;
-
-            }
-
-
-            @Override
-            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-
-                if(button == Input.Buttons.LEFT) {
-
-                    btnBack.setDrawable(new TextureRegionDrawable(new TextureRegion(back)));
-                    btnBack.addAction(Actions.removeActor());
-                    game.setScreen(new MenuScreen(game));
-                }
-            }
-
-        });
+//        // Back button listener
+//        btnBack.addListener(new InputListener() {
+//
+//            @Override
+//            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+//
+//                if(button == Input.Buttons.LEFT) {
+//                    btnBack.setDrawable(new TextureRegionDrawable(new TextureRegion(back_clicked)));
+//                }
+//
+//                return true;
+//
+//            }
+//
+//
+//            @Override
+//            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+//
+//                if(button == Input.Buttons.LEFT) {
+//
+//                    btnBack.setDrawable(new TextureRegionDrawable(new TextureRegion(back)));
+//                    btnBack.addAction(Actions.removeActor());
+//                    game.setScreen(new MenuScreen(game));
+//                }
+//            }
+//
+//        });
 
         // Apply button listener
         btnApply.addListener(new InputListener() {
@@ -162,22 +166,30 @@ public class OptionsScreen implements Screen {
 
         });
 
+        resolutionList.setFillParent(true);
+
+        scrollPane.setOverscroll(false, false);
+
         scrollPane.setActor(resolutionList);
+
+        fullscreen.setSize(100,50);
 
         // Set up a table which will be shown
         Table table = new Table();
         table.setFillParent(true);
         table.add(resolutionLabel);
         table.row();
-        table.add(scrollPane).size(300,180).colspan(2).padBottom(20);
+        table.add(scrollPane).size(300,182).colspan(2).padBottom(20);
         table.row();
         table.add(fullscreen).padBottom(20).right();
         table.add(windowed).padBottom(20).left().padLeft(10);
         table.row();
-        table.add(btnBack).size(100,50).right();
+        //table.add(btnBack).size(100,50).right();
         table.add(btnApply).size(100,50).left().padLeft(10);
 
         stage.addActor(table);
+
+        topBar.listenerTopBar(game);
 
     }
 
@@ -202,6 +214,8 @@ public class OptionsScreen implements Screen {
         // Draw stage
         stage.act(Gdx.graphics.getDeltaTime());
         stage.draw();
+
+        topBar.drawTopBar();
 
         goBack();
 
@@ -233,8 +247,8 @@ public class OptionsScreen implements Screen {
     public void dispose() {
 
         textureValues.disposeGlobalTextures();
-        back.dispose();
-        back_clicked.dispose();
+        //back.dispose();
+        //back_clicked.dispose();
         apply_clicked.dispose();
         apply.dispose();
         stage.dispose();
@@ -246,8 +260,9 @@ public class OptionsScreen implements Screen {
     // Method for loading all textures in this screen
     private void loadTextures() {
 
-        back = new Texture(Gdx.files.internal("optionsScreen/back.png"));
-        back_clicked = new Texture(Gdx.files.internal("optionsScreen/back_clicked.png"));
+        //back = new Texture(Gdx.files.internal("optionsScreen/back.png"));
+        //back_clicked = new Texture(Gdx.files.internal("optionsScreen/back_clicked.png"));
+        topBar.initializeTopBar();
         apply = new Texture(Gdx.files.internal("optionsScreen/apply.png"));
         apply_clicked = new Texture(Gdx.files.internal("optionsScreen/apply_clicked.png"));
         textureValues.loadGlobalTextures();

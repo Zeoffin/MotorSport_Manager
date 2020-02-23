@@ -31,7 +31,7 @@ public class TextureValues {
 
     public void drawGlobalTextures() {
 
-        game.batch.draw(background, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        game.batch.draw(background, 0, 0, window_width, window_height);
         //game.batch.draw(logo,window_width/2-50, window_height/2+80);
 
     }
